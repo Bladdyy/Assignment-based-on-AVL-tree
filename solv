@@ -1,0 +1,373 @@
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+long long notover;
+int k;
+struct Node {
+    int key;
+    int number;
+    int onleft = 0;
+    int onright = 0;
+    Node *parent = nullptr;
+    Node *left = nullptr;
+    Node *right = nullptr;
+    int height = 1;
+    vector<pair<int, int>> intervals;
+};
+typedef struct Node Node;
+
+Node *createNode(int start, Node* pop) {
+    Node *node = new Node();
+    node->parent = pop;
+    node->key = start;
+    node->number = 1;
+    return (node);
+}
+
+Node *rightRot(Node *main) {
+    Node *rson = main->right;
+    Node *root;
+    int rightleft = 0;
+    int rightright = 0;
+    int mainleft = 0;
+    if (rson->left != nullptr){
+        rightleft = (rson->left)->height;
+    }
+    if (rson->right != nullptr){
+        rightright = (rson->right)->height;
+    }
+    if (main->left != nullptr){
+        mainleft = (main->left)->height;
+    }
+    if (rightleft < rightright){ // right-right
+        main->right = rson->left;
+        if (rson->left != nullptr){
+            main->onright = (rson->left)->onright + (rson->left)->onleft + (rson->left)->number;
+            (rson->left)->parent = main;
+        }
+        else{
+            main->onright = 0;
+        }
+        main->height = max(mainleft, rightleft) + 1;
+        rson->parent = main->parent;
+        main->parent = rson;
+        rson->left = main;
+        rson->onleft = main->onright + main->onleft + main->number;
+        rson->height = max(main->height, rightright) + 1;
+        root = rson;
+    }
+    else{ // right-left
+        root = (rson->left);
+        root->parent = main->parent;
+        main->parent = root;
+        Node *t1 = root->left;
+        Node *t2 = root->right;
+        int height1 = 0;
+        int height2 = 0;
+        if (t1 != nullptr){
+            main->onright = t1->onright + t1->onleft + t1->number;
+            t1->parent = main;
+            height1 = t1->height;
+        }
+        else{
+            main->onright = 0;
+        }
+        if (t2 != nullptr){
+            rson->onleft = t2->onleft + t2->onright + t2->number;
+            t2->parent = rson;
+            height2 = t2->height;
+        }
+        else{
+            rson->onleft = 0;
+        }
+        main->right = t1;
+        main->height = max(height1, mainleft) + 1;
+        rson->parent = root;
+        rson->left = t2;
+        rson->height = max(height2, rightright) + 1;
+        root->left = main;
+        root->onleft = main->onleft + main->onright + main->number;
+        root->right = rson;
+        root->onright = rson->onleft + rson->onright + rson->number;
+        root->height = max(main->height, rson->height) + 1;
+    }
+    return root;
+}
+
+// Rotate left
+Node *leftRot(Node *main) {
+    Node *lson = main->left;
+    Node *root;
+    int leftleft = 0;
+    int leftright = 0;
+    int mainright = 0;
+    if (lson->left != nullptr){
+        leftleft = (lson->left)->height;
+    }
+    if (lson->right != nullptr){
+        leftright = (lson->right)->height;
+    }
+    if (main->right != nullptr){
+        mainright = (main->right)->height;
+    }
+    if (leftleft > leftright) {  // left-left
+        main->left = lson->right;
+        if (lson->right != nullptr){
+            (lson->right)->parent = main;
+            main->onleft = (lson->right)->onleft + (lson->right)->onright + (lson->right)->number;
+        }
+        else{
+            main->onleft = 0;
+        }
+        lson->right = main;
+        lson->onright = main->onleft + main->onright + main->number;
+        main->height = max(leftright, mainright) + 1;
+        root = lson;
+        root->parent = main->parent;
+        main->parent = root;
+        root->height = max(main->height, leftleft) + 1;
+    }
+    else{  // left-right
+        root = lson->right;
+        root->parent = main->parent;
+        Node *t1 = root->left;
+        Node *t2 = root->right;
+        int height1 = 0;
+        int height2 = 0;
+        if (t1 != nullptr){
+            lson->onright = t1->onright + t1->onleft + t1->number;
+            t1->parent = lson->right;
+            height1 = t1->height;
+        }
+        else{
+            lson->onright = 0;
+        }
+        if (t2 != nullptr){
+            main->onleft = t2->onright + t2->onleft + t2->number;
+            t2->parent = main->left;
+            height2 = t2->height;
+        }
+        else{
+            main->onleft = 0;
+        }
+        root->left = lson;
+        root->onleft = lson->onleft + lson->onright + lson->number;
+        root->right = main;
+        root->onright = main->onleft + main->onright + main->number;
+        lson->parent = root;
+        main->parent = root;
+        lson->right = t1;
+        main->left = t2;
+        lson->height = max(height1, leftleft) + 1;
+        main->height = max(height2, mainright) + 1;
+        root->height = max(lson->height, main->height) + 1;
+    }
+    return root;
+}
+Node *heightCheck(Node* node){
+
+    int left = 0;
+    int right = 0;
+
+    if (node->left != nullptr){
+        left = (node->left)->height;
+        node->onleft = (node->left)->onleft + (node->left)->onright + (node->left)->number;
+    }
+    else{
+        node->onleft = 0;
+    }
+    if (node->right != nullptr){
+        right = (node->right)->height;
+        node->onright = (node->right)->onleft + (node->right)->onright + (node->right)->number;
+    }
+    else{
+        node->onright = 0;
+    }
+    if (left - right < -1){ // prawe większe
+        node = rightRot(node);
+    }
+    else if (left - right > 1){ // lewe większe
+        node = leftRot(node);
+    }
+    else{
+        node->height = max(left, right) + 1;
+    }
+    return node;
+}
+pair<Node*, Node*> findMax(Node *node){
+    pair<Node*, Node*> ans;
+    if (node->right != nullptr){
+        ans = findMax(node->right);
+        node->right = ans.first;
+    }
+    else if (node->left != nullptr){
+        (node->left)->parent = node->parent;
+        return make_pair(node->left, node);
+    }
+    else{
+        return make_pair(nullptr, node);
+    }
+    node = heightCheck(node);
+    ans.first = node;
+    return ans;
+}
+Node *deleteNode(Node *node, int val, int num){
+    if (val < node->key){
+        node->left = deleteNode(node->left, val, num);
+    }
+    else if (val > node->key){
+        node->right = deleteNode(node->right, val, num);
+    }
+    else if (node->number - num > 0){
+        node->number -= num;
+    }
+    else{
+        int kids = 0;
+        Node* lkid = node->left;
+        Node* rkid = node->right;
+        if (lkid != nullptr){
+            kids++;
+        }
+        if (rkid != nullptr){
+            kids++;
+        }
+        if (kids == 0){
+            free(node);
+            return nullptr;
+        }
+        else if (kids == 1){
+            if (lkid != nullptr){
+                lkid->parent = node->parent;
+                free(node);
+                return lkid;
+            }
+            else{
+                rkid->parent = node->parent;
+                free(node);
+                return rkid;
+            }
+        }
+        else{
+            if (lkid->right == nullptr){
+                lkid->parent = node->parent;
+                lkid->right = rkid;
+                rkid->parent = lkid;
+                free(node);
+                node = lkid;
+            }
+            else{
+                pair<Node*, Node*> ans = findMax(lkid);
+                ans.second->parent = node->parent;
+                ans.second->left = ans.first;
+                ans.first->parent = ans.second;
+                ans.second->right = node->right;
+                (node->right)->parent = ans.second;
+                free(node);
+                node = ans.second;
+            }
+        }
+    }
+
+    node = heightCheck(node);
+    return node;
+}
+
+Node *insertNode(Node *node, int val, Node *parent) {
+    if (node == nullptr) {
+        return (createNode(val, parent));
+    }
+    if (val < node->key){
+        node->left = insertNode(node->left, val, node);
+    }
+    else if (val > node->key) {
+        node->right = insertNode(node->right, val, node);
+    }
+    else {
+        node->number++;
+        return node;
+    }
+    node = heightCheck(node);
+    return node;
+}
+
+void checkOverStart(Node* node, int key){
+    if (node != nullptr) {
+        if (key < node->key) {
+            notover += node->onright + node->number;
+            checkOverStart(node->left, key);
+        }
+        else if (key > node->key){
+            checkOverStart(node->right, key);
+        }
+        else {
+            notover += node->onright;
+        }
+    }
+}
+void checkOverEnd(Node* node, int key){
+    if (node != nullptr) {
+        if (key < node->key) {
+            checkOverEnd(node->left, key);
+        }
+        else if (key > node->key){
+            notover += node->onleft + node->number;
+            checkOverEnd(node->right, key);
+        }
+        else {
+            notover += node->onleft;
+        }
+    }
+}
+
+int main() {
+    std::ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    Node *sroot = nullptr;
+    Node *eroot = nullptr;
+    long long over = 0;
+    long long intree = 0;
+    set<vector<int>> elements;
+    int n, a, b, t;
+    cin >> n >> k;
+    for (int i = 0; i < n; i++){
+        cin >> a >> b >> t;
+        vector<int> vec;
+        vec.emplace_back(t);
+        vec.emplace_back(a);
+        vec.emplace_back(b);
+        auto placement = elements.lower_bound(vec);
+        if (placement != elements.end() && placement->at(0) == t && placement->at(1) == a && placement->at(2) == b){
+            vec.emplace_back(placement->at(3) + 1);
+            elements.erase(placement);
+        }
+        else{
+            vec.emplace_back(1);
+        }
+        elements.insert(vec);
+    }
+
+    auto add = elements.begin();
+    auto del = elements.begin();
+
+    while (add != elements.end()){
+        if (add->at(0) - del->at(0) > k){
+            sroot = deleteNode(sroot, del->at(1), del->at(3));
+            eroot = deleteNode(eroot, del->at(2), del->at(3));
+            intree -= del->at(3);
+            del++;
+        }
+        else{
+            for (int i = 0; i < add->at(3); i++) {
+                notover = 0;
+                checkOverStart(sroot, add->at(2));
+                checkOverEnd(eroot, add->at(1));
+                over += intree - notover;
+                sroot = insertNode(sroot, add->at(1), nullptr);
+                eroot = insertNode(eroot, add->at(2), nullptr);
+                intree++;
+            }
+            add++;
+        }
+    }
+    cout << over;
+}
