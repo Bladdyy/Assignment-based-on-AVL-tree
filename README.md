@@ -1,4 +1,7 @@
+### Self implemented AVL tree 
+
 ## Assignment
+
 W związku ze zmianami na szczytach władzy, Bajtazar został niedawno dyrektorem Bajtockich Linii Kolejowych (BKL). Aktualnie Bajtocja jest w ruinie i nie ma tam żadnych linii kolejowych. Bajtazar chciałby
 zbudować pierwszą linię, służącą do przewozu towarów. Została zgłoszona pierwsza propozycja przebiegu trasy
 i aby ocenić jej jakość, Bajtazar postanowił przeprowadzić pewną symulację. Bajtockie firmy zostały poproszone o zadeklarowanie skąd, dokąd i w jakim terminie chciałyby przesłać towar proponowaną linią kolejową.
