@@ -28,4 +28,3 @@ poprawnym wynikiem jest:
 2
 
 
-### Self implemented AVL tree 
