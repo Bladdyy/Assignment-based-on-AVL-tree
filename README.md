@@ -1,4 +1,3 @@
-### Self implemented AVL tree 
 
 ## Assignment
 
@@ -27,3 +26,6 @@ Dla danych wejściowych:
 3 7 4
 poprawnym wynikiem jest:
 2
+
+
+### Self implemented AVL tree 
