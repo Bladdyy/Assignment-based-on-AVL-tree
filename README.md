@@ -1,5 +1,4 @@
 ## Assignment
----------------------
 W związku ze zmianami na szczytach władzy, Bajtazar został niedawno dyrektorem Bajtockich Linii Kolejowych (BKL). Aktualnie Bajtocja jest w ruinie i nie ma tam żadnych linii kolejowych. Bajtazar chciałby
 zbudować pierwszą linię, służącą do przewozu towarów. Została zgłoszona pierwsza propozycja przebiegu trasy
 i aby ocenić jej jakość, Bajtazar postanowił przeprowadzić pewną symulację. Bajtockie firmy zostały poproszone o zadeklarowanie skąd, dokąd i w jakim terminie chciałyby przesłać towar proponowaną linią kolejową.
@@ -9,7 +8,6 @@ kolidują ze sobą, gdy przedziały [a1, b1] oraz [a2, b2] mają niepuste przeci
 Mając daną listę żądań oraz liczbę k, Bajtazar chciałby wiedzieć ile par żądań koliduje ze sobą. Pomóż
 Bajtazarowi i napisz program, który realizuje to zadanie.
 
------------------------
 ### Wejście
 W pierwszym wierszu wejścia podane są dwie liczby całkowite: n, k (1 ≤ n ≤ 2 · 105, 1 ≤ k ≤ 109), gdzie njest liczbą żądań.
 W każdym z kolejnych n wierszy znajduje trójka liczb naturalnych postaci ai, bi, ti oddzielonych spacjami,
